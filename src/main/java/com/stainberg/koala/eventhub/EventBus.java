@@ -1,5 +1,6 @@
 package com.stainberg.koala.eventhub;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -157,6 +158,11 @@ public class EventBus {
                     }
                     if(object instanceof android.app.Fragment) {
                         if(!((android.app.Fragment) object).isAdded()) {
+                            return;
+                        }
+                    }
+                    if(object instanceof Activity) {
+                        if(((Activity) object).isDestroyed()) {
                             return;
                         }
                     }

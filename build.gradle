@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 17
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -22,19 +22,19 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:26.0.2'
 }
 
 repositories {
     mavenCentral()
 }
 
-apply plugin: 'com.novoda.bintray-release'
-publish {
-    userOrg = 'donaldyen'
-    groupId = 'com.stainberg.koala'
-    artifactId = 'eventhub'
-    publishVersion = '0.0.1'
-    desc = 'Wow'
-    website = 'https://github.com/stainberg/koala-eventhub'
-}
+//apply plugin: 'com.novoda.bintray-release'
+//publish {
+//    userOrg = 'donaldyen'
+//    groupId = 'com.stainberg.koala'
+//    artifactId = 'eventhub'
+//    publishVersion = '0.0.4'
+//    desc = 'eventhub'
+//    website = 'https://github.com/stainberg/koala-eventhub'
+//}
