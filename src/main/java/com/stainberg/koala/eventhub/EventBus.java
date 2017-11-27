@@ -20,6 +20,7 @@ public class EventBus {
     ConcurrentLinkedQueue<WeakReference<Subscription>> subscriptions;
     private ExecutorService executorService;
     private ExecutorService bgExecutor;
+    private ExecutorService dispatchExecutor;
     private static volatile EventBus defaultInstance;
     private boolean interrupt = false;
 
@@ -38,6 +39,7 @@ public class EventBus {
         queue = builder.queue;
         subscriptions = builder.subscriptions;
         executorService = builder.executorService;
+        dispatchExecutor = Executors.newCachedThreadPool();
         bgExecutor = builder.bgExecutor;
         interrupt = false;
         new EventThread().start();
@@ -58,11 +60,13 @@ public class EventBus {
                 for (WeakReference<Subscription> s : subscriptions) {
                     Subscription subscribe = s.get();
                     if (subscribe == null) {
+                        s.clear();
                         subscriptions.remove(s);
                     } else {
                         if (object instanceof Subscription) {
                             Subscription subscription = (Subscription) object;
                             if (subscription.id.equals(subscribe.id)) {
+                                s.clear();
                                 subscriptions.remove(s);
                                 break;
                             }
@@ -70,10 +74,12 @@ public class EventBus {
                             String tag = subscribe.id.substring(0, subscribe.id.indexOf("@"));
                             if (subscribe.mode == Mode.standard) {
                                 if(tag.equals(String.valueOf(object.hashCode()))) {
+                                    s.clear();
                                     subscriptions.remove(s);
                                 }
-                            } else if (subscribe.mode == Mode.singleTask) {
+                            } else { //singleTask
                                 if(tag.equals(String.valueOf(object.getClass().getName()))) {
+                                    s.clear();
                                     subscriptions.remove(s);
                                 }
                             }
@@ -91,6 +97,7 @@ public class EventBus {
                 for (WeakReference<Subscription> s : subscriptions) {
                     Subscription subscribe = s.get();
                     if (subscribe == null) {
+                        s.clear();
                         subscriptions.remove(s);
                     }
                 }
@@ -101,16 +108,18 @@ public class EventBus {
                 }
                 if (subscription.mode == Mode.standard) {
                     subscription.id = parent.hashCode() + "@" + subscription.getClass().getName();
-                } else if (subscription.mode == Mode.singleTask) {
+                } else { //singleTask
                     subscription.id = parent.getClass().getName() + "@" + subscription.getClass().getName();
                     for (WeakReference<Subscription> s : subscriptions) {
                         Subscription subscribe = s.get();
                         if (subscribe != null) {
                             if (subscribe.id.equals(subscription.id)) {
+                                s.clear();
                                 subscriptions.remove(s);
                                 break;
                             }
                         } else {
+                            s.clear();
                             subscriptions.remove(s);
                         }
                     }
@@ -125,6 +134,7 @@ public class EventBus {
         for(WeakReference<Subscription> subscription : subscriptions) {
             Subscription subscribe = subscription.get();
             if(subscribe == null) {
+                subscription.clear();
                 subscriptions.remove(subscription);
             } else {
                 if(subscribe.handleType == HandleType.synchronous) {
@@ -187,12 +197,13 @@ public class EventBus {
     }
 
     public void dispatch(final IEvent event) {//handler event in the background then publish it to main thread or background thread
-        executorService.execute(new Runnable() {
+        dispatchExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 for(WeakReference<Subscription> subscription : subscriptions) {
                     Subscription subscribe = subscription.get();
                     if(subscribe == null) {
+                        subscription.clear();
                         subscriptions.remove(subscription);
                     } else {
                         if (subscribe.handleType == HandleType.main) {
@@ -264,7 +275,7 @@ public class EventBus {
         public Builder() {
             queue = new ConcurrentLinkedQueue<>();
             subscriptions = new ConcurrentLinkedQueue<>();
-            executorService = Executors.newCachedThreadPool();
+            executorService = Executors.newFixedThreadPool(1);
             bgExecutor = Executors.newCachedThreadPool();
         }
 
