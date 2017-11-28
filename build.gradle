@@ -34,7 +34,7 @@ publish {
     userOrg = 'donaldyen'
     groupId = 'com.stainberg.koala'
     artifactId = 'eventhub'
-    publishVersion = '0.0.5'
+    publishVersion = '0.0.6'
     desc = 'eventhub'
     website = 'https://github.com/stainberg/koala-eventhub'
 }

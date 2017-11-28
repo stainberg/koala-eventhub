@@ -60,7 +60,6 @@ public class EventBus {
                 for (WeakReference<Subscription> s : subscriptions) {
                     Subscription subscribe = s.get();
                     if (subscribe == null) {
-                        s.clear();
                         subscriptions.remove(s);
                     } else {
                         if (object instanceof Subscription) {
@@ -97,7 +96,6 @@ public class EventBus {
                 for (WeakReference<Subscription> s : subscriptions) {
                     Subscription subscribe = s.get();
                     if (subscribe == null) {
-                        s.clear();
                         subscriptions.remove(s);
                     }
                 }
@@ -134,7 +132,6 @@ public class EventBus {
         for(WeakReference<Subscription> subscription : subscriptions) {
             Subscription subscribe = subscription.get();
             if(subscribe == null) {
-                subscription.clear();
                 subscriptions.remove(subscription);
             } else {
                 if(subscribe.handleType == HandleType.synchronous) {
@@ -203,7 +200,6 @@ public class EventBus {
                 for(WeakReference<Subscription> subscription : subscriptions) {
                     Subscription subscribe = subscription.get();
                     if(subscribe == null) {
-                        subscription.clear();
                         subscriptions.remove(subscription);
                     } else {
                         if (subscribe.handleType == HandleType.main) {
