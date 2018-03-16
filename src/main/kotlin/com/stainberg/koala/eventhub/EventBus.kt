@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
 /**
  * Created by Stainberg on 4/22/16.
  */
-class EventBus {
+class EventBus private constructor() {
     private val queue = ConcurrentLinkedQueue<IEvent>()
     private val subscriptions = ConcurrentLinkedQueue<WeakReference<Subscription<IEvent>>>()
     private val executorService = Executors.newFixedThreadPool(1)
