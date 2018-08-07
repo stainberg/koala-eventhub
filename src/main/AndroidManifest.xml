@@ -3,10 +3,4 @@
           package="com.stainberg.keventhub"
 >
 
-    <application android:allowBackup="true"
-                 android:supportsRtl="true"
-    >
-
-    </application>
-
 </manifest>
